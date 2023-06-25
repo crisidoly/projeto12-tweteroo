@@ -9,33 +9,39 @@ const tweets = [];
 app.use(cors());
 app.use(express.json());
 
-app.post("/sign-up", (req, res) => {
-  const { username, avatar } = req.body;
-  users.push({ username, avatar });
+app.post("/sign-up", function(req, res) {
+  const username = req.body.username;
+  const avatar = req.body.avatar;
+  users.push({ username: username, avatar: avatar });
   res.send("OK");
 });
 
-app.post("/tweets", (req, res) => {
-  const { username, tweet } = req.body;
+app.post("/tweets", function(req, res) {
+  const username = req.body.username;
+  const tweet = req.body.tweet;
 
-  const realUser = users.find((user) => user.username === username);
+  const realUser = users.find(function(user) {
+    return user.username === username;
+  });
 
   if (!realUser) {
     return res.send("UNAUTHORIZED");
   }
 
-  tweets.push({ username, tweet });
+  tweets.push({ username: username, tweet: tweet });
   res.send("OK");
 });
 
-app.get("/tweets", (req, res) => {
-  const lastTenTweets = tweets.slice(-10).map(tweet => {
-    const user = users.find(u => u.username === tweet.username);
-    return { ...tweet, avatar: user.avatar };
+app.get("/tweets", function(req, res) {
+  const lastTenTweets = tweets.slice(-10).map(function(tweet) {
+    const user = users.find(function(u) {
+      return u.username === tweet.username;
+    });
+    return Object.assign({}, tweet, { avatar: user.avatar });
   });
   res.send(lastTenTweets);
 });
 
-app.listen(PORT, () => {
-  console.log(`Rodando na porta ${PORT}`);
+app.listen(PORT, function() {
+  console.log("Rodando na porta " + PORT);
 });

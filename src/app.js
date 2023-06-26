@@ -12,24 +12,33 @@ app.use(express.json());
 app.post("/sign-up", function(req, res) {
   const username = req.body.username;
   const avatar = req.body.avatar;
+
+  if (!username || !avatar || typeof username !== "string" || typeof avatar !== "string") {
+    return res.status(400).send("Todos os campos são obrigatórios!");
+  }
+
   users.push({ username: username, avatar: avatar });
-  res.send("OK");
+  res.status(201).send("OK");
 });
 
 app.post("/tweets", function(req, res) {
   const username = req.body.username;
   const tweet = req.body.tweet;
 
+  if (!username || !tweet || typeof username !== "string" || typeof tweet !== "string") {
+    return res.status(400).send("Todos os campos são obrigatórios!");
+  }
+
   const realUser = users.find(function(user) {
     return user.username === username;
   });
 
   if (!realUser) {
-    return res.send("UNAUTHORIZED");
+    return res.status(401).send("UNAUTHORIZED");
   }
 
   tweets.push({ username: username, tweet: tweet });
-  res.send("OK");
+  res.status(201).send("OK");
 });
 
 app.get("/tweets", function(req, res) {
